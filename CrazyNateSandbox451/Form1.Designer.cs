@@ -1,4 +1,4 @@
-﻿namespace CrazyNateSandbox
+﻿namespace CrazyNateSandbox451
 {
   partial class Form1
   {

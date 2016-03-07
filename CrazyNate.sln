@@ -10,9 +10,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrazyNateManaged", "CrazyNa
 		{65CB968A-6EE7-4495-946B-D6825DC68CC5} = {65CB968A-6EE7-4495-946B-D6825DC68CC5}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrazyNateSandbox", "CrazyNateSandbox\CrazyNateSandbox.csproj", "{635D3C96-C727-4E45-B923-F09BA22BCB60}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrazyNateSandboxInjector", "CrazyNateSandboxInjector\CrazyNateSandboxInjector.csproj", "{DBA11783-C508-4FE3-87CB-AF7B040913FA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrazyNateSandbox20", "CrazyNateSandbox20\CrazyNateSandbox20.csproj", "{B175A1D3-BDC7-45D3-86D9-C089536B1681}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrazyNateSandbox451", "CrazyNateSandbox451\CrazyNateSandbox451.csproj", "{635D3C96-C727-4E45-B923-F09BA22BCB60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,14 +30,18 @@ Global
 		{3768A458-B071-479A-B1AD-35E315C7015D}.Debug|x86.Build.0 = Debug|x86
 		{3768A458-B071-479A-B1AD-35E315C7015D}.Release|x86.ActiveCfg = Release|x86
 		{3768A458-B071-479A-B1AD-35E315C7015D}.Release|x86.Build.0 = Release|x86
-		{635D3C96-C727-4E45-B923-F09BA22BCB60}.Debug|x86.ActiveCfg = Debug|x86
-		{635D3C96-C727-4E45-B923-F09BA22BCB60}.Debug|x86.Build.0 = Debug|x86
-		{635D3C96-C727-4E45-B923-F09BA22BCB60}.Release|x86.ActiveCfg = Release|x86
-		{635D3C96-C727-4E45-B923-F09BA22BCB60}.Release|x86.Build.0 = Release|x86
 		{DBA11783-C508-4FE3-87CB-AF7B040913FA}.Debug|x86.ActiveCfg = Debug|x86
 		{DBA11783-C508-4FE3-87CB-AF7B040913FA}.Debug|x86.Build.0 = Debug|x86
 		{DBA11783-C508-4FE3-87CB-AF7B040913FA}.Release|x86.ActiveCfg = Release|x86
 		{DBA11783-C508-4FE3-87CB-AF7B040913FA}.Release|x86.Build.0 = Release|x86
+		{B175A1D3-BDC7-45D3-86D9-C089536B1681}.Debug|x86.ActiveCfg = Debug|x86
+		{B175A1D3-BDC7-45D3-86D9-C089536B1681}.Debug|x86.Build.0 = Debug|x86
+		{B175A1D3-BDC7-45D3-86D9-C089536B1681}.Release|x86.ActiveCfg = Release|x86
+		{B175A1D3-BDC7-45D3-86D9-C089536B1681}.Release|x86.Build.0 = Release|x86
+		{635D3C96-C727-4E45-B923-F09BA22BCB60}.Debug|x86.ActiveCfg = Debug|x86
+		{635D3C96-C727-4E45-B923-F09BA22BCB60}.Debug|x86.Build.0 = Debug|x86
+		{635D3C96-C727-4E45-B923-F09BA22BCB60}.Release|x86.ActiveCfg = Release|x86
+		{635D3C96-C727-4E45-B923-F09BA22BCB60}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
