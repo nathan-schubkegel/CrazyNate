@@ -132,5 +132,10 @@ namespace CrazyNateManaged
       UInt32 cb,
       ref UInt32 lpcbNeeded);
 #endif
+
+    public static string GetLastErrorMessage()
+    {
+      return (new Win32Exception(Marshal.GetLastWin32Error())).Message;
+    }
   }
 }

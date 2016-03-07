@@ -55,7 +55,14 @@ namespace CrazyNateSandboxInjector
       else
       {
         // inject my dll into it
-        DllInjector.InjectIntoProcess(pid.Value);
+        try
+        {
+          DllInjector.InjectIntoProcess(pid.Value);
+        }
+        catch (Exception ex)
+        {
+          MessageBox.Show(ex.ToString());
+        }
       }
     }
   }

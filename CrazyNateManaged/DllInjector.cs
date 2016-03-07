@@ -22,7 +22,7 @@ namespace CrazyNateManaged
 
       if (processHandle == IntPtr.Zero)
       {
-        throw new Win32Exception(Marshal.GetLastWin32Error(), "Unable to open handle to target process");
+        throw new Exception("Unable to open handle to target process: " + Win32.GetLastErrorMessage());
       }
 
       try
@@ -44,7 +44,7 @@ namespace CrazyNateManaged
 
         if (pRemoteMemory == IntPtr.Zero)
         {
-          throw new Win32Exception(Marshal.GetLastWin32Error(), "Unable to allocate memory in target process");
+          throw new Exception("Unable to allocate memory in target process: " + Win32.GetLastErrorMessage());
         }
 
         try
@@ -54,7 +54,7 @@ namespace CrazyNateManaged
 
           if (dllNameBytes.Length > remoteMemorySize.ToInt32())
           {
-            throw new Win32Exception("Insufficient memory allocated in target process for dll name");
+            throw new Exception("Insufficient memory allocated in target process for dll name");
           }
 
           IntPtr numberOfBytesWritten = IntPtr.Zero;
@@ -65,7 +65,7 @@ namespace CrazyNateManaged
             new IntPtr(dllNameBytes.Length),
             ref numberOfBytesWritten))
           {
-            throw new Win32Exception(Marshal.GetLastWin32Error(), "Unable to write memory in target process");
+            throw new Exception("Unable to write memory in target process: " + Win32.GetLastErrorMessage());
           }
 
           // Map your DLL to the remote process via CreateRemoteThread & LoadLibrary.
@@ -84,7 +84,7 @@ namespace CrazyNateManaged
 
           if (hRemoteThread == IntPtr.Zero)
           {
-            throw new Win32Exception(Marshal.GetLastWin32Error(), "Unable to create thread in target process");
+            throw new Exception("Unable to create thread in target process: " + Win32.GetLastErrorMessage());
           }
 
           Int32 remoteLoadLibraryResult = 0;
@@ -95,19 +95,19 @@ namespace CrazyNateManaged
             // thread will terminate as soon as our DllMain (called with reason DLL_PROCESS_ATTACH) returns.
             if (Win32.WAIT_OBJECT_0 != Win32.WaitForSingleObject(hRemoteThread, Win32.INFINITE))
             {
-              throw new Win32Exception(Marshal.GetLastWin32Error(), "Failed to wait for thread in target process to finish");
+              throw new Exception("Failed to wait for thread in target process to finish: " + Win32.GetLastErrorMessage());
             }
 
             // Retrieve the exit code of the remote thread (GetExitCodeThread).
             // Note that this is the value returned by LoadLibrary, thus the base address (HMODULE) of our mapped DLL.
             if (!Win32.GetExitCodeThread(hRemoteThread, ref remoteLoadLibraryResult))
             {
-              throw new Win32Exception(Marshal.GetLastWin32Error(), "Unable to get exit code of thread in target process");
+              throw new Exception("Unable to get exit code of thread in target process: " + Win32.GetLastErrorMessage());
             }
 
             if (remoteLoadLibraryResult == 0)
             {
-              throw new Win32Exception("LoadLibraryW failed in target process");
+              throw new Exception("LoadLibraryW failed in target process");
               // JOKE: too bad I can't fire up another thread to call GetLastError in the target process! lol!
             }
           }
@@ -138,7 +138,7 @@ namespace CrazyNateManaged
               (UInt32)(remoteHModules.Length * Marshal.SizeOf(typeof(IntPtr))), 
               ref remoteHModuleRequiredBytes))
             {
-              throw new Win32Exception(Marshal.GetLastWin32Error(), "Unable to enumerate dlls in target process");
+              throw new Exception(Marshal.GetLastWin32Error(), "Unable to enumerate dlls in target process");
             }
 #endif
           }
@@ -166,7 +166,7 @@ namespace CrazyNateManaged
 
             if (hRemoteThread == IntPtr.Zero)
             {
-              throw new Win32Exception(Marshal.GetLastWin32Error(), "Unable to create thread 2 in target process");
+              throw new Exception("Unable to create thread 2 in target process: " + Win32.GetLastErrorMessage());
             }
 
             try
@@ -174,7 +174,7 @@ namespace CrazyNateManaged
               // Wait until the remote thread terminates (WaitForSingleObject);
               if (Win32.WAIT_OBJECT_0 != Win32.WaitForSingleObject(hRemoteThread, Win32.INFINITE))
               {
-                throw new Win32Exception(Marshal.GetLastWin32Error(), "Failed to wait for thread 2 in target process to finish");
+                throw new Exception("Failed to wait for thread 2 in target process to finish: " + Win32.GetLastErrorMessage());
               }
 
               // Retrieve the exit code of the remote thread (GetExitCodeThread).
@@ -182,7 +182,7 @@ namespace CrazyNateManaged
               Int32 remoteLaunchCrazyNateManagedResult = 0;
               if (!Win32.GetExitCodeThread(hRemoteThread, ref remoteLaunchCrazyNateManagedResult))
               {
-                throw new Win32Exception(Marshal.GetLastWin32Error(), "Unable to get exit code of thread 2 in target process");
+                throw new Exception("Unable to get exit code of thread 2 in target process: " + Win32.GetLastErrorMessage());
               }
 
               if (remoteLaunchCrazyNateManagedResult == 0)
@@ -202,10 +202,10 @@ namespace CrazyNateManaged
                 }
                 else
                 {
-                  errorMessage = "Failed to get error message from target process: " + (new Win32Exception(Marshal.GetLastWin32Error())).Message;
+                  errorMessage = "Failed to get error message from target process: " + Win32.GetLastErrorMessage();
                 }
 
-                throw new Win32Exception("Failed to launch managed code in target process\r\n" + errorMessage);
+                throw new Exception("Failed to launch managed code in target process: " + errorMessage);
               }
             }
             finally
@@ -269,7 +269,7 @@ namespace CrazyNateManaged
       int numChars = Win32.MAX_PATH;
       if (!Win32.QueryFullProcessImageNameW(processHandle, 0, processPathBuffer, ref numChars))
       {
-        throw new Win32Exception(Marshal.GetLastWin32Error(), "Unable to get full executable path of target process");
+        throw new Exception("Unable to get full executable path of target process: " + Win32.GetLastErrorMessage());
       }
       processPathBuffer.Length = numChars;
       string processPath = processPathBuffer.ToString();
@@ -292,7 +292,7 @@ namespace CrazyNateManaged
           // let it slide if target process already has dlls loaded
           if (!File.Exists(destPath))
           {
-            throw new AggregateException("Unable to copy CrazyNate dlls from " + thisDllDirPath + " to target process directory " + processDirPath, ex);
+            throw new AggregateException("Unable to copy " + sourcePath + " to target process directory " + processDirPath, ex);
           }
         }
       }
