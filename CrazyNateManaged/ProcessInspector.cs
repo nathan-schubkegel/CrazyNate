@@ -7,11 +7,49 @@ using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Reflection;
 using System.IO;
+using System.Diagnostics;
 
 namespace CrazyNateManaged
 {
   public static class ProcessInspector
   {
+    public static int? FindProcess(string exeName)
+    {
+      int? pid = null;
+      try
+      {
+        exeName = exeName ?? string.Empty;
+
+        // find running process CrazyNateSandbox.exe
+        Process[] processes = Process.GetProcesses();
+        foreach (Process p in processes)
+        {
+          string processPath = ProcessInspector.GetProcessPath(p.Id);
+          if (processPath == null)
+          {
+            // this occurs when the process dies while we're enumerating it
+            continue;
+          }
+
+          string fileName = Path.GetFileName(processPath);
+
+          // take the standalone process if we can get it
+          if (exeName.Equals(fileName, StringComparison.OrdinalIgnoreCase))
+          {
+            pid = p.Id;
+            break;
+          }
+
+          p.Dispose();
+        }
+      }
+      catch
+      {
+        pid = null;
+      }
+      return pid;
+    }
+
     public static string GetProcessPath(int processPid)
     {
       // Retrieve a HANDLE to the remote process (OpenProcess).
