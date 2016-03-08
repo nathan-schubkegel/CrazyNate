@@ -22,7 +22,9 @@ namespace CrazyNateManaged
 
       if (processHandle == IntPtr.Zero)
       {
-        throw new Exception("Unable to open handle to target process: " + Win32.GetLastErrorMessage());
+        //throw new Exception("Unable to open handle to target process: " + Win32.GetLastErrorMessage());
+        // this can happen if the process dies before we get at it
+        return null;
       }
 
       try
@@ -32,7 +34,9 @@ namespace CrazyNateManaged
         int numChars = Win32.MAX_PATH;
         if (!Win32.QueryFullProcessImageNameW(processHandle, 0, processPathBuffer, ref numChars))
         {
-          throw new Exception("Unable to get full executable path of target process: " + Win32.GetLastErrorMessage());
+          //throw new Exception("Unable to get full executable path of target process: " + Win32.GetLastErrorMessage());
+          // this could probably happen if the process dies before we get at it
+          return null;
         }
         processPathBuffer.Length = numChars;
         string processPath = processPathBuffer.ToString();

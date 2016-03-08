@@ -19,6 +19,9 @@ namespace CrazyNateManaged
     public static extern IntPtr GetLaunchCrazyNateManagedAddress();
 
     [DllImport("CrazyNate.dll", SetLastError = true, CallingConvention = CallingConvention.StdCall)]
-    public static extern UInt32 GetExpectedErrorMessageBufferSize();
+    public static extern UInt32 GetInputOutputBufferCharCount();
+
+    [DllImport("CrazyNate.dll", SetLastError = true, CallingConvention = CallingConvention.StdCall)]
+    public static extern UInt32 LaunchCrazyNateManaged([MarshalAs(UnmanagedType.LPWStr)] StringBuilder inputOutputBuffer);
   }
 }

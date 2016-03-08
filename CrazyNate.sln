@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrazyNateSandbox20", "Crazy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrazyNateSandbox451", "CrazyNateSandbox451\CrazyNateSandbox451.csproj", "{635D3C96-C727-4E45-B923-F09BA22BCB60}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrazyNateSelfLauncher", "CrazyNateSelfLauncher\CrazyNateSelfLauncher.csproj", "{F41BAE18-ADFB-40C0-B9A7-413A8DEC04C2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -42,6 +44,10 @@ Global
 		{635D3C96-C727-4E45-B923-F09BA22BCB60}.Debug|x86.Build.0 = Debug|x86
 		{635D3C96-C727-4E45-B923-F09BA22BCB60}.Release|x86.ActiveCfg = Release|x86
 		{635D3C96-C727-4E45-B923-F09BA22BCB60}.Release|x86.Build.0 = Release|x86
+		{F41BAE18-ADFB-40C0-B9A7-413A8DEC04C2}.Debug|x86.ActiveCfg = Debug|x86
+		{F41BAE18-ADFB-40C0-B9A7-413A8DEC04C2}.Debug|x86.Build.0 = Debug|x86
+		{F41BAE18-ADFB-40C0-B9A7-413A8DEC04C2}.Release|x86.ActiveCfg = Release|x86
+		{F41BAE18-ADFB-40C0-B9A7-413A8DEC04C2}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

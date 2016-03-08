@@ -74,6 +74,14 @@ namespace CrazyNateManaged
       ref IntPtr lpNumberOfBytesWritten);
 
     [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern bool WriteProcessMemory(
+      IntPtr hProcess,
+      IntPtr lpBaseAddress,
+      [MarshalAs(UnmanagedType.LPWStr)] StringBuilder lpBuffer,
+      IntPtr nSize,
+      ref IntPtr lpNumberOfBytesWritten);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
     public static extern bool ReadProcessMemory(
       IntPtr hProcess,
       IntPtr lpBaseAddress,

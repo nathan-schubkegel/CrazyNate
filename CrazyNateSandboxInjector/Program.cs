@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -33,6 +34,11 @@ namespace CrazyNateSandboxInjector
         try
         {
           processPath = ProcessInspector.GetProcessPath(p.Id);
+          if (processPath == null)
+          {
+            // this occurs when the process dies while we're enumerating it
+            continue;
+          }
         }
         catch
         {
@@ -41,7 +47,16 @@ namespace CrazyNateSandboxInjector
         }
 
         string fileName = Path.GetFileName(processPath);
-        if (fileName == "CrazyNateSandbox.exe")
+
+        // take the standalone process if we can get it
+        if ("CrazyNateSandbox.exe".Equals(fileName, StringComparison.OrdinalIgnoreCase))
+        {
+          pid = p.Id;
+          break;
+        }
+
+        // take the 'vshost' process if that's all we can find
+        if ("CrazyNateSandbox.vshost.exe".Equals(fileName, StringComparison.OrdinalIgnoreCase))
         {
           pid = p.Id;
         }
@@ -57,7 +72,7 @@ namespace CrazyNateSandboxInjector
         // inject my dll into it
         try
         {
-          DllInjector.InjectIntoProcess(pid.Value);
+          DllInjector.InjectIntoProcess(pid.Value, "CrazyNateManaged.dll", "CrazyNateManaged.ManagedEntryPoint", "Enter", "and I mean it!");
         }
         catch (Exception ex)
         {

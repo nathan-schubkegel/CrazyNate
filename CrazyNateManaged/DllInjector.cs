@@ -12,7 +12,7 @@ namespace CrazyNateManaged
 {
   public static class DllInjector
   {
-    public static void InjectIntoProcess(int processPid)
+    public static void InjectIntoProcess(int processPid, string dllPath, string typeName, string methodName, string argument)
     {
       // Retrieve a HANDLE to the remote process (OpenProcess).
       IntPtr processHandle = Win32.OpenProcess(
@@ -29,12 +29,31 @@ namespace CrazyNateManaged
       {
         // Copy all our DLLs to the same directory as the exe
         // (because theoretically that's where they're easiest to load from)
-        CopyDllsToProcessDirectory(processHandle);
+        CopyDllsToProcessDirectory(processHandle, dllPath);
+
+        // These parameters will be sent to the target process as 1 string
+        // and the entire expected buffer size will be copied
+        UInt32 inputOutputBufferCharCount = CrazyNateDll.GetInputOutputBufferCharCount();
+        StringBuilder dllInfo = new StringBuilder((int)inputOutputBufferCharCount);
+        dllInfo.Append("CrazyNate.dll");
+        dllInfo.Append((char)0);
+        dllInfo.Append(Path.GetFileName(dllPath));
+        dllInfo.Append((char)0);
+        dllInfo.Append(typeName);
+        dllInfo.Append((char)0);
+        dllInfo.Append(methodName);
+        dllInfo.Append((char)0);
+        dllInfo.Append(argument);
+        dllInfo.Append((char)0);
+        while (dllInfo.Length < inputOutputBufferCharCount) dllInfo.Append((char)0);
+        if (dllInfo.Length > inputOutputBufferCharCount)
+        {
+          throw new Exception("Unable to store inputs (" + dllInfo.Length + " chars) in buffer (" + inputOutputBufferCharCount + " chars)");
+        }
 
         // Allocate memory for the DLL name in the remote process (VirtualAllocEx).
         // (allocate alot, since we'll reuse this memory later for reporting error messages back from CrazyNate.dll)
-        UInt32 requestedCharsInErrorMessageBuffer = CrazyNateDll.GetExpectedErrorMessageBufferSize();
-        IntPtr remoteMemorySize = new IntPtr(Math.Max(Win32.MAX_PATH, requestedCharsInErrorMessageBuffer) * sizeof(char));
+        IntPtr remoteMemorySize = new IntPtr(inputOutputBufferCharCount * sizeof(char));
         IntPtr pRemoteMemory = Win32.VirtualAllocEx(
           processHandle,
           IntPtr.Zero, // let the function determine where to allocate the memory
@@ -49,23 +68,22 @@ namespace CrazyNateManaged
 
         try
         {
-          // Write the DLL name (without path) to the allocated memory (WriteProcessMemory).
-          byte[] dllNameBytes = Encoding.Unicode.GetBytes("CrazyNate.dll" + (char)0);
-
-          if (dllNameBytes.Length > remoteMemorySize.ToInt32())
-          {
-            throw new Exception("Insufficient memory allocated in target process for dll name");
-          }
-
+          // Write the DLL name (without path) and other input args to the allocated memory (WriteProcessMemory).
+          IntPtr numberOfBytesToWrite = new IntPtr(inputOutputBufferCharCount * sizeof(char));
           IntPtr numberOfBytesWritten = IntPtr.Zero;
           if (!Win32.WriteProcessMemory(
             processHandle,
             pRemoteMemory,
-            dllNameBytes,
-            new IntPtr(dllNameBytes.Length),
+            dllInfo,
+            numberOfBytesToWrite,
             ref numberOfBytesWritten))
           {
             throw new Exception("Unable to write memory in target process: " + Win32.GetLastErrorMessage());
+          }
+
+          if (numberOfBytesWritten != numberOfBytesToWrite)
+          {
+            throw new Exception("Unable to write correct number of bytes in target process memory (" + numberOfBytesWritten.ToInt64() + " written, " + numberOfBytesToWrite.ToInt64() + " attempted)");
           }
 
           // Map your DLL to the remote process via CreateRemoteThread & LoadLibrary.
@@ -185,7 +203,7 @@ namespace CrazyNateManaged
                 throw new Exception("Unable to get exit code of thread 2 in target process: " + Win32.GetLastErrorMessage());
               }
 
-              if (remoteLaunchCrazyNateManagedResult == 0)
+              if (remoteLaunchCrazyNateManagedResult != 1)
               {
                 // read remote process memory for error message about why it failed
                 string errorMessage = string.Empty;
@@ -255,7 +273,7 @@ namespace CrazyNateManaged
       }
     }
 
-    private static void CopyDllsToProcessDirectory(IntPtr processHandle)
+    private static void CopyDllsToProcessDirectory(IntPtr processHandle, string dllNameOrPath)
     {
       // Get the full path of CrazyNateManaged.dll
       string thisDllUri = Assembly.GetExecutingAssembly().CodeBase;
@@ -278,9 +296,21 @@ namespace CrazyNateManaged
       string processDirPath = Path.GetDirectoryName(processPath);
 
       // Copy CrazyNate dlls to target process directory
-      foreach (string fileName in new string[] { "CrazyNateManaged.dll", "CrazyNate.dll" })
+      foreach (string fileNameOrPath in new string[] { "CrazyNate.dll", dllNameOrPath })
       {
-        string sourcePath = Path.Combine(thisDllDirPath, fileName);
+        string sourcePath;
+        string fileName;
+        if (fileNameOrPath.Equals(Path.GetFileName(fileNameOrPath), StringComparison.OrdinalIgnoreCase))
+        {
+          fileName = fileNameOrPath;
+          sourcePath = Path.Combine(thisDllDirPath, fileNameOrPath);
+        }
+        else
+        {
+          fileName = Path.GetFileName(fileNameOrPath);
+          sourcePath = dllNameOrPath;
+        }
+        
         string destPath = Path.Combine(processDirPath, fileName);
 
         try
