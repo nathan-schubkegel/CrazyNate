@@ -39,6 +39,7 @@
     <Compile Include="DllInjector.cs" />
     <Compile Include="ImageHlp.cs" />
     <Compile Include="ManagedEntryPoint.cs" />
+    <Compile Include="OpCodeReader.cs" />
     <Compile Include="ProcessInspector.cs" />
     <Compile Include="Win32.cs" />
   </ItemGroup>
@@ -56,6 +57,12 @@
       <Link>CrazyNate.pdb</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharpDisasm\SharpDisasm\CrazyNateSharpDisasm.csproj">
+      <Project>{d828384e-0251-44c4-8bf2-3608fd3dd2cd}</Project>
+      <Name>CrazyNateSharpDisasm</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

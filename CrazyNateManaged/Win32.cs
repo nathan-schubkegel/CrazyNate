@@ -145,5 +145,9 @@ namespace CrazyNateManaged
     {
       return (new Win32Exception(Marshal.GetLastWin32Error())).Message;
     }
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern IntPtr LoadLibraryW(
+      [MarshalAs(UnmanagedType.LPWStr)] string lpFileName);
   }
 }
