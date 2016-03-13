@@ -19,34 +19,11 @@ namespace CrazyNateSelfLauncher
     [STAThread]
     static void Main()
     {
-      // This part tests acquisition of unmanaged DLL exports
-      List<string> exports = CrazyNateManaged.DllExports.GetExports("CrazyNate.dll");
-      // write to a local xml file
-      DataContractSerializer serializer = new DataContractSerializer(typeof(List<string>));
-      using (FileStream fs = new FileStream("CrazyNate_Exports.xml", FileMode.Create))
-      {
-        serializer.WriteObject(fs, exports);
-      }
-      // open the xml file
-      using (Process p = new Process())
-      {
-        p.StartInfo = new ProcessStartInfo("CrazyNate_Exports.xml");
-        p.Start();
-      }
+      Application.EnableVisualStyles();
+      Application.SetCompatibleTextRenderingDefault(false);
 
-      // This part tests CrazyNate.LaunchCrazyNateManaged
-      StringBuilder builder = new StringBuilder((int)CrazyNateDll.GetInputOutputBufferCharCount());
-      builder.Append("CrazyNate.dll");
-      builder.Append((char)0);
-      builder.Append("CrazyNateManaged.dll");
-      builder.Append((char)0);
-      builder.Append("CrazyNateManaged.ManagedEntryPoint");
-      builder.Append((char)0);
-      builder.Append("Enter");
-      builder.Append((char)0);
-      builder.Append("and I mean it!");
-      builder.Append((char)0);
-      CrazyNateDll.LaunchCrazyNateManaged(builder);
+      // This part explores BPL exports
+      Application.Run(new Form1());
     }
   }
 }
