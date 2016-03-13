@@ -72,7 +72,12 @@ namespace CrazyNateSandboxInjector
         // inject my dll into it
         try
         {
-          DllInjector.InjectIntoProcess(pid.Value, "CrazyNateManaged.dll", "CrazyNateManaged.ManagedEntryPoint", "Enter", "and I mean it!");
+          DllInjector.InjectIntoProcess(pid.Value, 
+            "CrazyNateManaged.dll", 
+            new string[] { "CrazyNateSharpDisasm.dll" },
+            "CrazyNateManaged.ManagedEntryPoint", 
+            "Enter", 
+            "and I mean it!");
         }
         catch (Exception ex)
         {

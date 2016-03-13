@@ -12,7 +12,7 @@ namespace CrazyNateManaged
 {
   public static class DllInjector
   {
-    public static void InjectIntoProcess(int processPid, string dllPath, string typeName, string methodName, string argument)
+    public static void InjectIntoProcess(int processPid, string dllPath, IEnumerable<string> dependencyPaths, string typeName, string methodName, string argument)
     {
       // Retrieve a HANDLE to the remote process (OpenProcess).
       IntPtr processHandle = Win32.OpenProcess(
@@ -29,7 +29,7 @@ namespace CrazyNateManaged
       {
         // Copy all our DLLs to the same directory as the exe
         // (because theoretically that's where they're easiest to load from)
-        CopyDllsToProcessDirectory(processHandle, dllPath);
+        CopyDllsToProcessDirectory(processHandle, new string[] { dllPath }.Concat(dependencyPaths));
 
         // These parameters will be sent to the target process as 1 string
         // and the entire expected buffer size will be copied
@@ -273,7 +273,7 @@ namespace CrazyNateManaged
       }
     }
 
-    private static void CopyDllsToProcessDirectory(IntPtr processHandle, string dllNameOrPath)
+    private static void CopyDllsToProcessDirectory(IntPtr processHandle, IEnumerable<string> dependencyNamesOrPaths)
     {
       // Get the full path of CrazyNateManaged.dll
       string thisDllUri = Assembly.GetExecutingAssembly().CodeBase;
@@ -295,8 +295,15 @@ namespace CrazyNateManaged
       // Get directory path of the target process
       string processDirPath = Path.GetDirectoryName(processPath);
 
+      // Make sure CrazyNate.dll will be copied
+      List<string> sourceFileNamesOrPaths = new List<string>(dependencyNamesOrPaths);
+      if (sourceFileNamesOrPaths.FindIndex(x => string.Equals(x, "CrazyNate.dll", StringComparison.OrdinalIgnoreCase)) == -1)
+      {
+        sourceFileNamesOrPaths.Add("CrazyNate.dll");
+      }
+
       // Copy CrazyNate dlls to target process directory
-      foreach (string fileNameOrPath in new string[] { "CrazyNate.dll", dllNameOrPath })
+      foreach (string fileNameOrPath in sourceFileNamesOrPaths)
       {
         string sourcePath;
         string fileName;
@@ -308,7 +315,7 @@ namespace CrazyNateManaged
         else
         {
           fileName = Path.GetFileName(fileNameOrPath);
-          sourcePath = dllNameOrPath;
+          sourcePath = fileNameOrPath;
         }
         
         string destPath = Path.Combine(processDirPath, fileName);
@@ -319,7 +326,8 @@ namespace CrazyNateManaged
         }
         catch (Exception ex)
         {
-          // let it slide if target process already has dlls loaded
+          // let it slide if the file already exists
+          // (possibly the target process already has that file loaded)
           if (!File.Exists(destPath))
           {
             throw new AggregateException("Unable to copy " + sourcePath + " to target process directory " + processDirPath, ex);
