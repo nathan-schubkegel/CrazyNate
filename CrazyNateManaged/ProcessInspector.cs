@@ -20,7 +20,7 @@ namespace CrazyNateManaged
       {
         exeName = exeName ?? string.Empty;
 
-        // find running process CrazyNateSandbox.exe
+        // look through all running processes
         Process[] processes = Process.GetProcesses();
         foreach (Process p in processes)
         {
@@ -33,7 +33,6 @@ namespace CrazyNateManaged
 
           string fileName = Path.GetFileName(processPath);
 
-          // take the standalone process if we can get it
           if (exeName.Equals(fileName, StringComparison.OrdinalIgnoreCase))
           {
             pid = p.Id;
@@ -68,23 +67,12 @@ namespace CrazyNateManaged
       try
       {
         // Get the full path of the target process
-        StringBuilder processPathBuffer = new StringBuilder(Win32.MAX_PATH);
-        int numChars = Win32.MAX_PATH;
-        if (!Win32.QueryFullProcessImageNameW(processHandle, 0, processPathBuffer, ref numChars))
-        {
-          //throw new Exception("Unable to get full executable path of target process: " + Win32.GetLastErrorMessage());
-          // this could probably happen if the process dies before we get at it
-          return null;
-        }
-        processPathBuffer.Length = numChars;
-        string processPath = processPathBuffer.ToString();
-        return processPath;
+        return Win32.QueryFullProcessImageNameW(processHandle);
       }
       finally
       {
         Win32.CloseHandle(processHandle);
       }
     }
-
   }
 }

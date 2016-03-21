@@ -40,11 +40,25 @@ namespace CrazyNateManaged
      * */
 
     [DllImport("kernel32.dll", SetLastError = true)]
-    public static extern bool QueryFullProcessImageNameW(
+    private static extern bool QueryFullProcessImageNameW(
       IntPtr hProcess,
       Int32 dwFlags,
       [MarshalAs(UnmanagedType.LPWStr)] StringBuilder lpExeName,
       ref Int32 lpdwSize);
+
+    public static string QueryFullProcessImageNameW(IntPtr processHandle)
+    {
+      // Get the full path of the target process
+      StringBuilder processPathBuffer = new StringBuilder(2000);
+      int numChars = processPathBuffer.Capacity;
+      if (!Win32.QueryFullProcessImageNameW(processHandle, 0, processPathBuffer, ref numChars))
+      {
+        // this could probably happen if the process dies before we get at it
+        return null;
+      }
+      processPathBuffer.Length = numChars;
+      return processPathBuffer.ToString();
+    }
 
     [DllImport("kernel32.dll", SetLastError = true)]
     public static extern IntPtr VirtualAllocEx(
@@ -149,5 +163,46 @@ namespace CrazyNateManaged
     [DllImport("kernel32.dll", SetLastError = true)]
     public static extern IntPtr LoadLibraryW(
       [MarshalAs(UnmanagedType.LPWStr)] string lpFileName);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern UInt32 GetModuleFileNameW(
+      IntPtr hModule,
+      [MarshalAs(UnmanagedType.LPWStr)] StringBuilder lpFilename,
+      UInt32 nSize);
+
+    /// <summary>
+    /// Returns full path of a DLL loaded in the current process.
+    /// </summary>
+    public static string GetModuleFileNameW(IntPtr hModule)
+    {
+      // TODO: do this without two allocations
+      StringBuilder b = new StringBuilder(512);
+      UInt32 numChars = (UInt32)b.Capacity;
+      while (numChars == b.Capacity)
+      {
+        b.Capacity *= 2;
+        numChars = GetModuleFileNameW(hModule, b, (UInt32)b.Capacity);
+      }
+      if (numChars == 0) return null;
+      b.Length = (int)numChars;
+      return b.ToString();
+    }
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern UInt32 GetLongPathName(
+      [MarshalAs(UnmanagedType.LPWStr)] string lpszShortPath,
+      [MarshalAs(UnmanagedType.LPWStr)] StringBuilder lpszLongPath,
+      UInt32 cchBuffer);
+
+    public static string GetLongPathName(string shortPath)
+    {
+      UInt32 requiredChars = GetLongPathName(shortPath, null, 0);
+      if (requiredChars == 0) return null;
+      StringBuilder b = new StringBuilder((int)requiredChars);
+      UInt32 numChars = GetLongPathName(shortPath, b, requiredChars);
+      if (numChars == 0) return null;
+      b.Length = (int)numChars;
+      return b.ToString();
+    }
   }
 }

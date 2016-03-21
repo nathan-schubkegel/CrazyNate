@@ -23,5 +23,10 @@ namespace CrazyNateManaged
 
     [DllImport("CrazyNate.dll", SetLastError = true, CallingConvention = CallingConvention.StdCall)]
     public static extern UInt32 LaunchCrazyNateManaged([MarshalAs(UnmanagedType.LPWStr)] StringBuilder inputOutputBuffer);
+
+    public static string GetAssemblyPath()
+    {
+      return Win32.GetModuleFileNameW(GetCrazyNateHModule());
+    }
   }
 }

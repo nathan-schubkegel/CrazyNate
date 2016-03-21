@@ -19,70 +19,41 @@ namespace CrazyNateSandboxInjector
     static void Main()
     {
       // find running process CrazyNateSandbox.exe
-      Process[] processes = Process.GetProcesses();
-
-      bool foundWhatLookedLikeIt = false;
-      int? pid = null;
-      foreach (Process p in processes)
-      {
-        if (p.ProcessName == "CrazyNateSandbox")
-        {
-          foundWhatLookedLikeIt = true;
-        }
-
-        string processPath;
-        try
-        {
-          processPath = ProcessInspector.GetProcessPath(p.Id);
-          if (processPath == null)
-          {
-            // this occurs when the process dies while we're enumerating it
-            continue;
-          }
-        }
-        catch
-        {
-          // obviously not a process we could inject into, then
-          continue;
-        }
-
-        string fileName = Path.GetFileName(processPath);
-
-        // take the standalone process if we can get it
-        if ("CrazyNateSandbox.exe".Equals(fileName, StringComparison.OrdinalIgnoreCase))
-        {
-          pid = p.Id;
-          break;
-        }
-
-        // take the 'vshost' process if that's all we can find
-        if ("CrazyNateSandbox.vshost.exe".Equals(fileName, StringComparison.OrdinalIgnoreCase))
-        {
-          pid = p.Id;
-        }
-      }
-
+      string[] exeNames = new string[] {"CrazyNateSandbox451.exe", "CrazyNateSandbox20.exe"};
+      int? pid = exeNames.Select(exeName => ProcessInspector.FindProcess(exeName)).First(x => x != null);
       if (pid == null)
       {
-        if (foundWhatLookedLikeIt) MessageBox.Show("Could not find CrazyNateSandbox.exe (saw CrazyNateSandbox but that wasn't it)");
-        else MessageBox.Show("Could not find CrazyNateSandbox.exe");
+        MessageBox.Show("Could not find any of these processes:" + Environment.NewLine +
+          string.Join(Environment.NewLine, exeNames));
+        return;
       }
-      else
+
+      // get path of its exe
+      string processPath = ProcessInspector.GetProcessPath(pid.Value);
+      if (processPath == null)
       {
-        // inject my dll into it
-        try
+        // this can occur when the process dies while we're enumerating it
+        MessageBox.Show("Could not get process path");
+        return;
+      }
+      
+      // inject my dll into it
+      try
+      {
+        DllInjector.DllInfo[] dlls = CrazyNateManaged.DependencyFetcher.GetDllInjectionInfo().ToArray();
+        var a = (DllInjector.ManagedDllInfo)dlls.Last();
+        if (a.FileNameOrPath != CrazyNateManaged.DependencyFetcher.GetPathToThisAssembly())
         {
-          DllInjector.InjectIntoProcess(pid.Value, 
-            "CrazyNateManaged.dll", 
-            new string[] { "CrazyNateSharpDisasm.dll" },
-            "CrazyNateManaged.ManagedEntryPoint", 
-            "Enter", 
-            "and I mean it!");
+          throw new Exception("expected last assembly to be CrazyNateManaged.dll");
         }
-        catch (Exception ex)
-        {
-          MessageBox.Show(ex.ToString());
-        }
+        a.EntryTypeName = ManagedEntryPoint.EntryTypeName;
+        a.EntryMethodName = ManagedEntryPoint.ShowMessageBoxMethodName;
+        a.EntryArgument = "and I mean it!";
+        DllInjector.InjectIntoProcess(pid.Value, dlls);
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show(ex.ToString());
       }
     }
   }

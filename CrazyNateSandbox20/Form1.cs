@@ -19,5 +19,13 @@ namespace CrazyNateSandbox20
     {
       lblAppDomain.Text = AppDomain.CurrentDomain.Id.ToString();
     }
+
+    protected override bool ShowWithoutActivation
+    {
+      get
+      {
+        return true;
+      }
+    }
   }
 }

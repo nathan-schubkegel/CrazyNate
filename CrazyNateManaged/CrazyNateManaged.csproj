@@ -34,6 +34,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DependencyFetcher.cs" />
     <Compile Include="CrazyNateDll.cs" />
     <Compile Include="DllExports.cs" />
     <Compile Include="DllInjector.cs" />
