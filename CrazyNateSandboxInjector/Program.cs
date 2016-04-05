@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using CrazyNateManaged;
+using CrazyNateManaged.Injection;
 
 namespace CrazyNateSandboxInjector
 {
@@ -40,8 +41,8 @@ namespace CrazyNateSandboxInjector
       // inject my dll into it
       try
       {
-        DllInjector.DllInfo[] dlls = CrazyNateManaged.DependencyFetcher.GetDllInjectionInfo().ToArray();
-        var a = (DllInjector.ManagedDllInfo)dlls.Last();
+        DllInfo[] dlls = CrazyNateManaged.DependencyFetcher.GetDllInjectionInfo().ToArray();
+        var a = (ManagedDllInfo)dlls.Last();
         if (a.FileNameOrPath != CrazyNateManaged.DependencyFetcher.GetPathToThisAssembly())
         {
           throw new Exception("expected last assembly to be CrazyNateManaged.dll");

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CrazyNateManaged.Injection;
 
 namespace CrazyNateManaged
 {
@@ -23,13 +24,13 @@ namespace CrazyNateManaged
       yield return GetPathToThisAssembly();
     }
 
-    public static IEnumerable<DllInjector.DllInfo> GetDllInjectionInfo()
+    public static IEnumerable<DllInfo> GetDllInjectionInfo()
     {
       // return CrazyNate.dll
-      yield return new DllInjector.CrazyNateDllInfo();
+      yield return new CrazyNateDllInfo();
 
       // return CrazyNateSharpDisasm.dll
-      yield return new DllInjector.ManagedDllInfo
+      yield return new ManagedDllInfo
         {
           FileNameOrPath = CrazyNateSharpDisasm.DependencyFetcher.GetPathToThisAssembly(),
           EntryTypeName = CrazyNateSharpDisasm.ManagedEntryPoint.EntryTypeName,
@@ -38,7 +39,7 @@ namespace CrazyNateManaged
         };
 
       // return CrazyNateManaged.dll
-      yield return new DllInjector.ManagedDllInfo
+      yield return new ManagedDllInfo
         {
           FileNameOrPath = DependencyFetcher.GetPathToThisAssembly(),
           EntryTypeName = ManagedEntryPoint.EntryTypeName,
