@@ -5,7 +5,7 @@
 #include <metahost.h>
 #include <Strsafe.h>
 
-// see if I can steal the .NET CRT implementation of memcpy
+// steal the .NET CRT implementation of memcpy
 // like suggested at http://www.drdobbs.com/avoiding-the-visual-c-runtime-library/184416623
 #pragma intrinsic(memcpy)
 

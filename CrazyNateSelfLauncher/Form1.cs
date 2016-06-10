@@ -6,10 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CrazyNateManaged;
+using CrazyNateSharpDisasm;
 using System.Runtime.Serialization;
 using System.IO;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Xml;
 
 namespace CrazyNateSelfLauncher
 {
@@ -162,14 +164,17 @@ namespace CrazyNateSelfLauncher
             {
               bytes[i] = Marshal.ReadByte(exportAddress, i);
             }
-            List<string> asm = OpCodeReader.Decompile(bytes).Select(x => x.ToString()).ToList();
+            List<Instruction> instructions = OpCodeReader.Decompile(bytes);
+            var disassemblyLines = instructions.ToPrintableStrings();
 
             // write to a local xml file
-            DataContractSerializer serializer = new DataContractSerializer(typeof(List<string>));
-            using (FileStream fs = new FileStream("DelphiExportOpcodes.xml", FileMode.Create))
+            DataContractSerializer serializer = new DataContractSerializer(disassemblyLines.GetType());
+            var xmlSettings = new XmlWriterSettings { Indent = true };
+            using (var xmlWriter = XmlWriter.Create("DelphiExportOpcodes.xml", xmlSettings))
             {
-              serializer.WriteObject(fs, asm);
+              serializer.WriteObject(xmlWriter, disassemblyLines);
             }
+
             // open the xml file
             using (Process p = new Process())
             {
