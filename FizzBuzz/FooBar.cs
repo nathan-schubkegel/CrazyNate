@@ -4,11 +4,16 @@ using System.Windows.Forms;
 namespace FizzBuzz
 {
   [ComVisible(true)]
-  public class FooBar : IFoo
+  public class FooBar : IFoo, IBar
   {
     public void DoStuff()
     {
-      MessageBox.Show("hahaha");
+      MessageBox.Show("stuff");
+    }
+
+    public void DoSomethingElse()
+    {
+      MessageBox.Show("something else");
     }
   }
 }
