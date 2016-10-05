@@ -3,6 +3,7 @@
 //#include <objbase.h>
 //#include <INITGUID.H>
 #include <metahost.h>
+#include <OleAuto.h>
 //#include "mscoree.h"
 //#include <Strsafe.h>
 #include <stdio.h>
@@ -30,8 +31,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
   _Assembly * pAssembly = NULL;
   DWORD returnValue = 0;
   DWORD appDomainId = 0;
-  BSTR assemblyFileName = L"FizzBuzz.dll";
-  BSTR typeName = L"FizzBuzz.FooBar";
+  BSTR assemblyName = SysAllocString(L"FizzBuzz");// L"C:\\Users\\nathschu\\Desktop\\CrazyNate\\Debug\\FizzBuzz.dll";
+  BSTR typeName = SysAllocString(L"FizzBuzz.FooBar");
   VARIANT fooBar;
   IFoo * foo = NULL;
 
@@ -44,7 +45,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
   CHECK(CorBindToRuntimeEx(L"v4.0.30319", 0, 0, CLSID_CorRuntimeHost, IID_ICorRuntimeHost, (LPVOID*)&pCorRuntime));
   CHECK(pCorRuntime->GetDefaultDomain(&pDefaultDomainUnkown));
   CHECK(pDefaultDomainUnkown->QueryInterface(&pAppDomain));
-  CHECK(pAppDomain->Load_2(assemblyFileName, &pAssembly));
+  CHECK(pAppDomain->Load_2(assemblyName, &pAssembly));
   CHECK(pAssembly->CreateInstance(typeName, &fooBar));
   CHECK(fooBar.pdispVal->QueryInterface(&foo));
   CHECK(foo->DoStuff());

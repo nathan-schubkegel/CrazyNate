@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace FizzBuzz
 {
-    public class FooBar
+  [ComVisible(true)]
+  public class FooBar : IFoo
+  {
+    public void DoStuff()
     {
-      public void DoStuff()
-      {
-        MessageBox.Show("hahaha");
-      }
+      MessageBox.Show("hahaha");
     }
+  }
 }
