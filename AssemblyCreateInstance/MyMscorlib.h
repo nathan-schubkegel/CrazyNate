@@ -8,6 +8,145 @@
 #pragma once
 #pragma pack(push, 8)
 
+struct __declspec(uuid("17156360-2f1a-384a-bc52-fde93c215c5b"))
+_Assembly : IDispatch
+{
+  //
+  // Raw methods provided by interface
+  //
+
+  virtual HRESULT __stdcall get_ToString(
+    /*[out,retval]*/ BSTR * pRetVal) = 0;
+  virtual HRESULT __stdcall Equals(
+    /*[in]*/ VARIANT other,
+    /*[out,retval]*/ VARIANT_BOOL * pRetVal) = 0;
+  virtual HRESULT __stdcall GetHashCode(
+    /*[out,retval]*/ long * pRetVal) = 0;
+  virtual HRESULT __stdcall GetType(
+  /*[out,retval]*/ struct _Type * * pRetVal) = 0;
+  virtual HRESULT __stdcall get_CodeBase(
+    /*[out,retval]*/ BSTR * pRetVal) = 0;
+  virtual HRESULT __stdcall get_EscapedCodeBase(
+    /*[out,retval]*/ BSTR * pRetVal) = 0;
+  virtual HRESULT __stdcall GetName(
+  /*[out,retval]*/ struct _AssemblyName * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetName_2(
+    /*[in]*/ VARIANT_BOOL copiedName,
+  /*[out,retval]*/ struct _AssemblyName * * pRetVal) = 0;
+  virtual HRESULT __stdcall get_FullName(
+    /*[out,retval]*/ BSTR * pRetVal) = 0;
+  virtual HRESULT __stdcall get_EntryPoint(
+  /*[out,retval]*/ struct _MethodInfo * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetType_2(
+    /*[in]*/ BSTR name,
+  /*[out,retval]*/ struct _Type * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetType_3(
+    /*[in]*/ BSTR name,
+    /*[in]*/ VARIANT_BOOL throwOnError,
+  /*[out,retval]*/ struct _Type * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetExportedTypes(
+    /*[out,retval]*/ SAFEARRAY * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetTypes(
+    /*[out,retval]*/ SAFEARRAY * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetManifestResourceStream(
+  /*[in]*/ struct _Type * Type,
+    /*[in]*/ BSTR name,
+  /*[out,retval]*/ struct _Stream * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetManifestResourceStream_2(
+    /*[in]*/ BSTR name,
+  /*[out,retval]*/ struct _Stream * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetFile(
+    /*[in]*/ BSTR name,
+  /*[out,retval]*/ struct _FileStream * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetFiles(
+    /*[out,retval]*/ SAFEARRAY * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetFiles_2(
+    /*[in]*/ VARIANT_BOOL getResourceModules,
+    /*[out,retval]*/ SAFEARRAY * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetManifestResourceNames(
+    /*[out,retval]*/ SAFEARRAY * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetManifestResourceInfo(
+    /*[in]*/ BSTR resourceName,
+  /*[out,retval]*/ struct _ManifestResourceInfo * * pRetVal) = 0;
+  virtual HRESULT __stdcall get_Location(
+    /*[out,retval]*/ BSTR * pRetVal) = 0;
+  virtual HRESULT __stdcall get_Evidence(
+  /*[out,retval]*/ struct _Evidence * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetCustomAttributes(
+  /*[in]*/ struct _Type * attributeType,
+    /*[in]*/ VARIANT_BOOL inherit,
+    /*[out,retval]*/ SAFEARRAY * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetCustomAttributes_2(
+    /*[in]*/ VARIANT_BOOL inherit,
+    /*[out,retval]*/ SAFEARRAY * * pRetVal) = 0;
+  virtual HRESULT __stdcall IsDefined(
+  /*[in]*/ struct _Type * attributeType,
+    /*[in]*/ VARIANT_BOOL inherit,
+    /*[out,retval]*/ VARIANT_BOOL * pRetVal) = 0;
+  virtual HRESULT __stdcall GetObjectData(
+  /*[in]*/ struct _SerializationInfo * info,
+  /*[in]*/ struct StreamingContext Context) = 0;
+  virtual HRESULT __stdcall add_ModuleResolve(
+  /*[in]*/ struct _ModuleResolveEventHandler * value) = 0;
+  virtual HRESULT __stdcall remove_ModuleResolve(
+  /*[in]*/ struct _ModuleResolveEventHandler * value) = 0;
+  virtual HRESULT __stdcall GetType_4(
+    /*[in]*/ BSTR name,
+    /*[in]*/ VARIANT_BOOL throwOnError,
+    /*[in]*/ VARIANT_BOOL ignoreCase,
+  /*[out,retval]*/ struct _Type * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetSatelliteAssembly(
+  /*[in]*/ struct _CultureInfo * culture,
+  /*[out,retval]*/ struct _Assembly * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetSatelliteAssembly_2(
+  /*[in]*/ struct _CultureInfo * culture,
+  /*[in]*/ struct _Version * Version,
+  /*[out,retval]*/ struct _Assembly * * pRetVal) = 0;
+  virtual HRESULT __stdcall LoadModule(
+    /*[in]*/ BSTR moduleName,
+    /*[in]*/ SAFEARRAY * rawModule,
+  /*[out,retval]*/ struct _Module * * pRetVal) = 0;
+  virtual HRESULT __stdcall LoadModule_2(
+    /*[in]*/ BSTR moduleName,
+    /*[in]*/ SAFEARRAY * rawModule,
+    /*[in]*/ SAFEARRAY * rawSymbolStore,
+  /*[out,retval]*/ struct _Module * * pRetVal) = 0;
+  virtual HRESULT __stdcall CreateInstance(
+    /*[in]*/ BSTR typeName,
+    /*[out,retval]*/ VARIANT * pRetVal) = 0;
+  virtual HRESULT __stdcall CreateInstance_2(
+    /*[in]*/ BSTR typeName,
+    /*[in]*/ VARIANT_BOOL ignoreCase,
+    /*[out,retval]*/ VARIANT * pRetVal) = 0;
+  virtual HRESULT __stdcall CreateInstance_3(
+    /*[in]*/ BSTR typeName,
+    /*[in]*/ VARIANT_BOOL ignoreCase,
+  /*[in]*/ enum BindingFlags bindingAttr,
+  /*[in]*/ struct _Binder * Binder,
+    /*[in]*/ SAFEARRAY * args,
+  /*[in]*/ struct _CultureInfo * culture,
+    /*[in]*/ SAFEARRAY * activationAttributes,
+    /*[out,retval]*/ VARIANT * pRetVal) = 0;
+  virtual HRESULT __stdcall GetLoadedModules(
+    /*[out,retval]*/ SAFEARRAY * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetLoadedModules_2(
+    /*[in]*/ VARIANT_BOOL getResourceModules,
+    /*[out,retval]*/ SAFEARRAY * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetModules(
+    /*[out,retval]*/ SAFEARRAY * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetModules_2(
+    /*[in]*/ VARIANT_BOOL getResourceModules,
+    /*[out,retval]*/ SAFEARRAY * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetModule(
+    /*[in]*/ BSTR name,
+  /*[out,retval]*/ struct _Module * * pRetVal) = 0;
+  virtual HRESULT __stdcall GetReferencedAssemblies(
+    /*[out,retval]*/ SAFEARRAY * * pRetVal) = 0;
+  virtual HRESULT __stdcall get_GlobalAssemblyCache(
+    /*[out,retval]*/ VARIANT_BOOL * pRetVal) = 0;
+};
+
+
 struct __declspec(uuid("05f696dc-2b29-3663-ad8b-c4389cf2a713"))
 _AppDomain : IUnknown
 {

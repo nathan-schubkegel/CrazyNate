@@ -2,13 +2,19 @@
 #include <windows.h>
 //#include <objbase.h>
 //#include <INITGUID.H>
-//#include <metahost.h>
+#include <metahost.h>
 //#include "mscoree.h"
 //#include <Strsafe.h>
 #include <stdio.h>
-#import "C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319\\mscorlib.tlb" no_namespace, raw_interfaces_only
+//#import "C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319\\mscorlib.tlb" no_namespace, raw_interfaces_only
 
-#include "HostControl.h"
+#include "MyMscorlib.h"
+
+struct __declspec(uuid("aaaaaaaa-2f1a-384a-bc52-fde93c215c5b"))
+IFoo : IDispatch
+{
+  virtual HRESULT __stdcall DoStuff() = 0;
+};
 
 HRESULT result;
 #define CHECK(a) { result = (a); if (!SUCCEEDED(result)) { printf("Error: %d\n", HRESULT_CODE(result)); return 1; } }
@@ -19,30 +25,36 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
   ICLRRuntimeInfo * pRuntimeInfo = NULL;
   ICLRRuntimeHost * pRuntime = NULL;
   ICorRuntimeHost * pCorRuntime = NULL;
-  IHostControl * pHostControl = &hostControl;
   IUnknown * pDefaultDomainUnkown = NULL;
   _AppDomain * pAppDomain = NULL;
+  _Assembly * pAssembly = NULL;
   DWORD returnValue = 0;
   DWORD appDomainId = 0;
+  BSTR assemblyFileName = L"FizzBuzz.dll";
+  BSTR typeName = L"FizzBuzz.FooBar";
+  VARIANT fooBar;
+  IFoo * foo = NULL;
 
-  CHECK(CLRCreateInstance(&CLSID_CLRMetaHost, &IID_ICLRMetaHost, &pMetaHost));
-  CHECK(pMetaHost->lpVtbl->GetRuntime(pMetaHost, L"v4.0.30319", &IID_ICLRRuntimeInfo, &pRuntimeInfo));
-  CHECK(pRuntimeInfo->lpVtbl->GetInterface(pRuntimeInfo, &CLSID_CLRRuntimeHost, &IID_ICLRRuntimeHost, &pRuntime));
-  CHECK(pRuntime->lpVtbl->SetHostControl(pRuntime, pHostControl));
-  CHECK(pRuntime->lpVtbl->Start(pRuntime));
-  CHECK(pRuntime->lpVtbl->GetCurrentAppDomainId(pRuntime, &appDomainId));
+  CHECK(CLRCreateInstance(CLSID_CLRMetaHost, IID_ICLRMetaHost, (LPVOID*)&pMetaHost));
+  CHECK(pMetaHost->GetRuntime(L"v4.0.30319", IID_ICLRRuntimeInfo, (LPVOID*)&pRuntimeInfo));
+  CHECK(pRuntimeInfo->GetInterface(CLSID_CLRRuntimeHost, IID_ICLRRuntimeHost, (LPVOID*)&pRuntime));
+  CHECK(pRuntime->Start());
+  CHECK(pRuntime->GetCurrentAppDomainId(&appDomainId));
 
-  CHECK(CorBindToRuntimeEx(L"v4.0.30319", 0, 0, &CLSID_CorRuntimeHost, &IID_ICorRuntimeHost, (void**)&pCorRuntime));
-  
-  hr = pRuntimeHost->GetDefaultDomain(&pCurrentDomain);
-  pCurrentDomain.ExecuteAssembly(assemblyFilename);
+  CHECK(CorBindToRuntimeEx(L"v4.0.30319", 0, 0, CLSID_CorRuntimeHost, IID_ICorRuntimeHost, (LPVOID*)&pCorRuntime));
+  CHECK(pCorRuntime->GetDefaultDomain(&pDefaultDomainUnkown));
+  CHECK(pDefaultDomainUnkown->QueryInterface(&pAppDomain));
+  CHECK(pAppDomain->Load_2(assemblyFileName, &pAssembly));
+  CHECK(pAssembly->CreateInstance(typeName, &fooBar));
+  CHECK(fooBar.pdispVal->QueryInterface(&foo));
+  CHECK(foo->DoStuff());
 
-  CHECK(pRuntime->lpVtbl->ExecuteInDefaultAppDomain(pRuntime,
-    L"FizzBuzz.dll", // assembly path
-    L"FizzBuzz.FooBar", // type name
-    L"DoStuff", // method name
-    L"and I mean it!", // argument
-    &returnValue));
+  //CHECK(pRuntime->lpVtbl->ExecuteInDefaultAppDomain(pRuntime,
+  //  L"FizzBuzz.dll", // assembly path
+  //  L"FizzBuzz.FooBar", // type name
+  //  L"DoStuff", // method name
+  //  L"and I mean it!", // argument
+  //  &returnValue));
 
   return 0;
 }
