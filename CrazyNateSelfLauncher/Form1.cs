@@ -180,5 +180,13 @@ namespace CrazyNateSelfLauncher
         }
       }
     }
+
+    private void button5_Click(object sender, EventArgs e)
+    {
+      byte[] bytes = new byte[] { 0xf0, 0x0f, 0xb0, 0x25, 0x78, 0x0a, 0x33, 0x50 };
+      //List<string> asm = OpCodeReader.Decompile(bytes).Select(x => x.ToString()).ToList();
+      var results = OpCodeReader.Decompile(bytes);
+      MessageBox.Show(string.Join(Environment.NewLine, results.Select(x => x.ToString())));
+    }
   }
 }
