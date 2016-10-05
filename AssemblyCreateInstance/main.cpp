@@ -37,13 +37,13 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 {
   ICLRMetaHost * pMetaHost = NULL;
   ICLRRuntimeInfo * pRuntimeInfo = NULL;
-  ICLRRuntimeHost * pRuntime = NULL;
   ICorRuntimeHost * pCorRuntime = NULL;
-  IUnknown * pDefaultDomainUnkown = NULL;
+  IUnknown * pAppDomainSetupUnknown = NULL;
+  IAppDomainSetup * pAppDomainSetup = NULL;
+  IUnknown * pAppDomainUnknown = NULL;
   _AppDomain * pAppDomain = NULL;
   _Assembly * pAssembly = NULL;
-  DWORD returnValue = 0;
-  DWORD appDomainId = 0;
+  BSTR appDomainName = SysAllocString(L"My Default AppDomain");
   BSTR assemblyName = SysAllocString(L"FizzBuzz"); // FizzBuzz.dll
   BSTR typeName = SysAllocString(L"FizzBuzz.FooBar");
   MSG msg;
@@ -57,14 +57,17 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
   // load and start a CLR
   CHECK(CLRCreateInstance(CLSID_CLRMetaHost, IID_ICLRMetaHost, (LPVOID*)&pMetaHost));
   CHECK(pMetaHost->GetRuntime(L"v4.0.30319", IID_ICLRRuntimeInfo, (LPVOID*)&pRuntimeInfo));
-  CHECK(pRuntimeInfo->GetInterface(CLSID_CLRRuntimeHost, IID_ICLRRuntimeHost, (LPVOID*)&pRuntime));
-  CHECK(pRuntime->Start());
-  CHECK(pRuntime->GetCurrentAppDomainId(&appDomainId));
+  CHECK(pRuntimeInfo->GetInterface(CLSID_CorRuntimeHost, IID_ICorRuntimeHost, (LPVOID*)&pCorRuntime));
+  CHECK(pCorRuntime->Start());
+
+  // create default app domain
+  CHECK(pCorRuntime->CreateDomainSetup(&pAppDomainSetupUnknown));
+  CHECK(pAppDomainSetupUnknown->QueryInterface(&pAppDomainSetup));
+  CHECK(pAppDomainSetup->put_ApplicationName(appDomainName));
+  CHECK(pCorRuntime->CreateDomainEx(L"My Default AppDomain", pAppDomainSetup, 0, &pAppDomainUnknown));
+  CHECK(pAppDomainUnknown->QueryInterface(&pAppDomain));
 
   // load FizzBuzz.dll and create a FooBar instance
-  CHECK(CorBindToRuntimeEx(L"v4.0.30319", 0, 0, CLSID_CorRuntimeHost, IID_ICorRuntimeHost, (LPVOID*)&pCorRuntime));
-  CHECK(pCorRuntime->GetDefaultDomain(&pDefaultDomainUnkown));
-  CHECK(pDefaultDomainUnkown->QueryInterface(&pAppDomain));
   CHECK(pAppDomain->Load_2(assemblyName, &pAssembly));
   CHECK(pAssembly->CreateInstance(typeName, &fooBar));
   CHECK(fooBar.pdispVal->QueryInterface(&foo));
@@ -93,6 +96,9 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 unsigned int __stdcall ThreadProc(void * p)
 {
   IBar * bar = NULL;
+
+  // make sure this is a separate STA thread
+  CHECK(CoInitializeEx(0, COINIT_APARTMENTTHREADED));
 
   // cast to another interface type
   // (If 'foo' was not free-threaded, this would block indefinitely 
