@@ -8,6 +8,55 @@
 #pragma once
 #pragma pack(push, 8)
 
+struct __declspec(uuid("27fff232-a7a8-40dd-8d4a-734ad59fcd41"))
+IAppDomainSetup : IUnknown
+{
+  //
+  // Raw methods provided by interface
+  //
+
+  virtual HRESULT __stdcall get_ApplicationBase(
+    /*[out,retval]*/ BSTR * pRetVal) = 0;
+  virtual HRESULT __stdcall put_ApplicationBase(
+    /*[in]*/ BSTR pRetVal) = 0;
+  virtual HRESULT __stdcall get_ApplicationName(
+    /*[out,retval]*/ BSTR * pRetVal) = 0;
+  virtual HRESULT __stdcall put_ApplicationName(
+    /*[in]*/ BSTR pRetVal) = 0;
+  virtual HRESULT __stdcall get_CachePath(
+    /*[out,retval]*/ BSTR * pRetVal) = 0;
+  virtual HRESULT __stdcall put_CachePath(
+    /*[in]*/ BSTR pRetVal) = 0;
+  virtual HRESULT __stdcall get_ConfigurationFile(
+    /*[out,retval]*/ BSTR * pRetVal) = 0;
+  virtual HRESULT __stdcall put_ConfigurationFile(
+    /*[in]*/ BSTR pRetVal) = 0;
+  virtual HRESULT __stdcall get_DynamicBase(
+    /*[out,retval]*/ BSTR * pRetVal) = 0;
+  virtual HRESULT __stdcall put_DynamicBase(
+    /*[in]*/ BSTR pRetVal) = 0;
+  virtual HRESULT __stdcall get_LicenseFile(
+    /*[out,retval]*/ BSTR * pRetVal) = 0;
+  virtual HRESULT __stdcall put_LicenseFile(
+    /*[in]*/ BSTR pRetVal) = 0;
+  virtual HRESULT __stdcall get_PrivateBinPath(
+    /*[out,retval]*/ BSTR * pRetVal) = 0;
+  virtual HRESULT __stdcall put_PrivateBinPath(
+    /*[in]*/ BSTR pRetVal) = 0;
+  virtual HRESULT __stdcall get_PrivateBinPathProbe(
+    /*[out,retval]*/ BSTR * pRetVal) = 0;
+  virtual HRESULT __stdcall put_PrivateBinPathProbe(
+    /*[in]*/ BSTR pRetVal) = 0;
+  virtual HRESULT __stdcall get_ShadowCopyDirectories(
+    /*[out,retval]*/ BSTR * pRetVal) = 0;
+  virtual HRESULT __stdcall put_ShadowCopyDirectories(
+    /*[in]*/ BSTR pRetVal) = 0;
+  virtual HRESULT __stdcall get_ShadowCopyFiles(
+    /*[out,retval]*/ BSTR * pRetVal) = 0;
+  virtual HRESULT __stdcall put_ShadowCopyFiles(
+    /*[in]*/ BSTR pRetVal) = 0;
+};
+
 struct __declspec(uuid("17156360-2f1a-384a-bc52-fde93c215c5b"))
 _Assembly : IDispatch
 {
