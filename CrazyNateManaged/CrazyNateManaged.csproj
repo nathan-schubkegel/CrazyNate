@@ -48,6 +48,7 @@
     <Compile Include="OpCodeReader.cs" />
     <Compile Include="ProcessInspector.cs" />
     <Compile Include="Injection\UnmanagedDllInfo.cs" />
+    <Compile Include="RepopulateObservableCollectionExtension.cs" />
     <Compile Include="Win32.cs" />
   </ItemGroup>
   <ItemGroup>
